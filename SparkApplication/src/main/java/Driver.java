@@ -17,7 +17,7 @@ public class Driver {
         String warehouseLocation = new File("spark-warehouse").getAbsolutePath();
         SparkSession spark = SparkSession
                 .builder()
-                .appName("Java Spark Hive Example")
+                .appName("FifaPlayersApacheSparkApplication")
                 .config("spark.sql.warehouse.dir", warehouseLocation)
                 .enableHiveSupport()
                 .getOrCreate();
