@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public class Driver {
      public static void main(String[] args) {
         String appName = "Fifa Players Spark Application";
         String csvFile = "fifaStats.csv";
+        String updatedCsvFile = "updatedPlayers.csv";
+
         SparkConf conf = new SparkConf().setAppName(appName).setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
         Encoder<Player> playerEncoder = Encoders.bean(Player.class);
@@ -51,8 +54,8 @@ public class Driver {
                      players_df.col("Nationality").equalTo(countries_continents_df.col("Country")),//condition
                      "left" //join type
                 )
-                //select all columns with mapping on value and salary column to remove $MK, and save it as a new column called NumberValue/Salary
-                .select(col("Name"),col("Age"),col("Nationality"),col("Continent"),col("Score"),col("Club"),col("Value"),col("Salary"),regexp_replace(col("Salary"),"[€MK]","").alias("NumSalary"),regexp_replace(col("Value"),"[€MK]","").alias("NumValue"))
+                .select(col("Name"),col("Age"),col("Nationality"),col("Continent"),col("Score"),col("Club"),col("Value"),col("Salary"))
+//        regexp_replace(col("Salary"),"[€MK]","").alias("NumSalary"),regexp_replace(col("Value"),"[€MK]","").alias("NumValue") --> to be put in select if I want to delete $MK from Salary and Value column
                 .as(playerEncoder);
 
 //        all_players_df.show();
@@ -77,12 +80,52 @@ public class Driver {
         Dataset<Player> oceania_players_df =  all_players_df.filter(col("Continent").equalTo("Oceania")).as(playerEncoder);
 
         /*
-        * we cam also do partitioning when writing ---> part 1
+        * we cam also do partitioning when writing ---> part 2
         */
-        all_players_df.write().partitionBy("Continent").csv("ContinentsPlayers");
+        all_players_df.write().mode(SaveMode.Overwrite).partitionBy("Continent").csv("ContinentsPlayers");
+
+        //TODO: Write all players dataset to hive database.
+
+         //        part 4
+         //        Updated Dataset of Players -- Updates in Salaries;
+
+        //read changed player file
+        Dataset<Row> updated_players_part_df = spark.read()
+                .format("csv")
+                .option("header","true")
+                .load(updatedCsvFile);
+
+//        updated_players_part_df.show();
+
+        // get dataset in Player type  -- merge it with continents
+        Dataset<Player> updated_players_df =  updated_players_part_df
+          .join(
+                  countries_continents_df, //join column
+                  updated_players_part_df.col("Nationality").equalTo(countries_continents_df.col("Country")),//condition
+                  "left" //join type
+          )
+          .select(col("Name"),col("Age"),col("Nationality"),col("Continent"),col("Score"),col("Club"),col("Value"),col("Salary"))
+          .as(playerEncoder);
+        updated_players_df.persist(StorageLevel.MEMORY_AND_DISK());
 
 
+        /*
+        * Update Process
+        * define updated values
+        * subtract updated values from all values
+        * get new updates
+        * union new updated values with subtracted values
+        */
 
-        //since we need to store 100GB we need to set spark.sql.files.maxPartitionBytes to define number of cores used in Cluster mode
+        Dataset<Player> notToUpdate = all_players_df.except(updated_players_df);
+        notToUpdate.persist(StorageLevel.MEMORY_AND_DISK());
+        notToUpdate.show(30);
+        updated_players_df.show(22);
+
+        Dataset<Player> all_updated_players_df = updated_players_df.union(notToUpdate).sort(desc("Score"));
+        all_updated_players_df.show(50);
+
+
+         //TODO: Update Tables with new Values in updated Players Dataset -- Write Query
     }
 }

@@ -4,23 +4,9 @@ public class Player {
     String Nationality;
     int Score;
     String Club;
-    float NumValue;
-    float NumSalary;
+    String Value;
+    String Salary;
     String Continent;
-
-    public Player() {
-    }
-
-    public Player(String name, int age, String nationality, int score, String club, float numValue, float numSalary, String continent) {
-        Name = name;
-        Age = age;
-        Nationality = nationality;
-        Score = score;
-        Club = club;
-        NumValue = numValue;
-        NumSalary = numSalary;
-        Continent = continent;
-    }
 
     public String getName() {
         return Name;
@@ -62,20 +48,20 @@ public class Player {
         Club = club;
     }
 
-    public float getNumValue() {
-        return NumValue;
+    public String getValue() {
+        return Value;
     }
 
-    public void setNumValue(float numValue) {
-        NumValue = numValue;
+    public void setValue(String value) {
+        Value = value;
     }
 
-    public float getNumSalary() {
-        return NumSalary;
+    public String getSalary() {
+        return Salary;
     }
 
-    public void setNumSalary(float numSalary) {
-        NumSalary = numSalary;
+    public void setSalary(String salary) {
+        Salary = salary;
     }
 
     public String getContinent() {
@@ -83,6 +69,17 @@ public class Player {
     }
 
     public void setContinent(String continent) {
+        Continent = continent;
+    }
+
+    public Player(String name, int age, String nationality, int score, String club, String value, String salary, String continent) {
+        Name = name;
+        Age = age;
+        Nationality = nationality;
+        Score = score;
+        Club = club;
+        Value = value;
+        Salary = salary;
         Continent = continent;
     }
 }
