@@ -15,14 +15,16 @@
     <dependencies>
         <dependency> <!-- Spark dependency -->
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.12</artifactId>
-            <version>3.1.2</version>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>2.4.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.12</artifactId>
-            <version>3.1.2</version>
+            <artifactId>spark-core_2.11</artifactId>
+            <version>2.4.4</version>
         </dependency>
     </dependencies>
-
+<!--     Spark 2.4.4              -->
+<!--     AWS EMR 5.33.0-->
+<!--     With Hive 1.2.1 support-->
 </project>

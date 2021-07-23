@@ -1,0 +1,34 @@
+aws configure 			//set credentials
+aws emr create-default-roles  	//setup defualt roles used when I setup the cluster
+
+//initialize cluster
+aws emr create-cluster --name SparkCluster --release-label emr-5.29.0 --instance-type m5.xlarge --instance-count 3 --application Name=Spark --use-default-roles --ec2-attributes KeyName=sparkPair
+// a cluster id will be returned
+
+//
+//
+{
+    "ClusterId": "j-TNLMBG1ZT23A",
+    "ClusterArn": "arn:aws:elasticmapreduce:us-east-2:842709523258:cluster/j-TNLMBG1ZT23A"
+}
+//
+//
+//
+
+//ssh to cluster master using Putty
+//use master public dns here ... not fixed
+putty -ssh -i C:\sparkPair.ppk hadoop@ec2-3-142-131-17.us-east-2.compute.amazonaws.com -D 8157
+
+export SPARK_PUBLIC_DNS=ec2-18-116-39-73.us-east-2.compute.amazonaws.com //master node on cluster DNS
+
+
+//submit your jar file
+spark-submit --master yarn --deploy-mode cluster --class main.Driver  $ PATH OF JAR UPLOADED TO S3 or SCP file
+
+//for UI 
+http://ec2-18-116-39-73.us-east-2.compute.amazonaws.com:20888/proxy/ $APPLICATION NAME
+
+
+
+//once finished
+aws emr terminate-clusters --cluster-id  j-TNLMBG1ZT23A
