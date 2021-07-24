@@ -117,15 +117,25 @@ public class Driver {
         * union new updated values with subtracted values
         */
 
-        Dataset<Player> notToUpdate = all_players_df.except(updated_players_df);
+//      Dataset<Player> notToUpdate = all_players_df.except(updated_players_df).sort(desc("Score"));
+        Dataset<Player> notToUpdate = all_players_df.join(updated_players_df,
+                all_players_df.col("Name").equalTo(updated_players_df.col("Name")), "leftanti")
+                .sort(desc("Score"))
+                .as(playerEncoder);
         notToUpdate.persist(StorageLevel.MEMORY_AND_DISK());
-        notToUpdate.show(30);
-        updated_players_df.show(22);
+//        notToUpdate.show(30);
+//        updated_players_df.show(22);
 
         Dataset<Player> all_updated_players_df = updated_players_df.union(notToUpdate).sort(desc("Score"));
-        all_updated_players_df.show(50);
+//        all_updated_players_df.show(50);
+
+        all_players_df=all_updated_players_df.coalesce(1); //get dataset in one partition to write in one csv file output,
+        //this won’t trigger data shuffling across the nodes of the Spark Cluster.
+        all_players_df.show(30);
+        all_players_df.write().mode(SaveMode.Overwrite).partitionBy("Continent").csv("ContinentsPlayersUpdated");
 
 
-         //TODO: Update Tables with new Values in updated Players Dataset -- Write Query
+
+        //TODO: Update Tables with new Values in updated Players Dataset -- Write Query
     }
 }
