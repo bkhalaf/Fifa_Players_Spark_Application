@@ -1,3 +1,4 @@
+
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.SparkConf;
@@ -156,7 +157,7 @@ public class Driver {
       for (int i=0;i<playerValuesList.size();i++){
          String name = playerValuesList.get(i).toString().split(",")[0].replaceAll("\\[","");
 
-         String playerValueString =playerValuesList.get(i).toString().split(",")[1].replaceAll("]","");
+         String playerValueString =(playerValuesList.get(i).toString().split(",")[1].replaceAll("]","")).replaceAll("€","");
          float numericValue=Float.parseFloat(playerValueString.toString().replaceAll("\\s*[a-zA-Z]+\\s*",""));
          String sign = playerValueString.toString().replaceAll("\\s*[0-9]+\\s*","").toUpperCase();
          if(sign.compareTo("M")==0){
@@ -209,7 +210,7 @@ public class Driver {
       hive_all_players_df.createOrReplaceTempView("player");
       spark.sqlContext().sql("Select * from player").show();
 
-//      spark.sql("CREATE TABLE IF NOT EXISTS player (name STRING, age int, Nationality STRING,Continent STRING,Score int,Club STRING,numValue float, numSalary float) USING hive");
+//    spark.sql("CREATE TABLE IF NOT EXISTS player (name STRING, age int, Nationality STRING,Continent STRING,Score int,Club STRING,numValue float, numSalary float) USING hive");
       spark.sqlContext().sql("SELECT Nationality,SUM(numSalary) as totalSalaries FROM player GROUP BY(Nationality) ORDER BY totalSalaries DESC").show();
       spark.sqlContext().sql("SELECT Club,SUM(numSalary) as totalSalaries FROM player GROUP BY(Club) ORDER BY totalSalaries DESC").show();
       spark.sqlContext().sql("SELECT Continent,AVG(Score) as avgScroe FROM player GROUP BY(Continent) ORDER BY avgScroe DESC").show();

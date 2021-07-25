@@ -7,6 +7,25 @@
     <groupId>org.example</groupId>
     <artifactId>FifaPlayersSparkApplication</artifactId>
     <version>1.0-SNAPSHOT</version>
+    
+    <build>
+  <plugins>
+    <plugin>
+      <!-- Build an executable JAR -->
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <version>3.1.0</version>
+      <configuration>
+        <archive>
+          <manifest>
+            <addClasspath>true</addClasspath>
+            <mainClass>Driver</mainClass>
+          </manifest>
+        </archive>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -24,7 +43,4 @@
             <version>2.4.4</version>
         </dependency>
     </dependencies>
-<!--     Spark 2.4.4              -->
-<!--     AWS EMR 5.33.0-->
-<!--     With Hive 1.2.1 support-->
 </project>

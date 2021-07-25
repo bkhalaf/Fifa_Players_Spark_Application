@@ -17,9 +17,9 @@ aws emr create-cluster --name SparkCluster --release-label emr-5.29.0 --instance
 
 //ssh to cluster master using Putty
 //use master public dns here ... not fixed
-putty -ssh -i C:\sparkPair.ppk hadoop@ec2-3-137-165-113.us-east-2.compute.amazonaws.com -D 8157
+putty -ssh -i C:\sparkPair.ppk hadoop@ec2-18-219-123-68.us-east-2.compute.amazonaws.com -D 8157
 
-export SPARK_PUBLIC_DNS=ec2-3-129-71-45.us-east-2.compute.amazonaws.com
+export SPARK_PUBLIC_DNS=ec2-18-219-123-68.us-east-2.compute.amazonaws.com
 
 //submit your jar file
 spark-submit --master yarn --deploy-mode cluster --class main.Driver  s3://harrijars/FifaPlayersSparkApplication.jar
