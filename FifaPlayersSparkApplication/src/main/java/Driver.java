@@ -202,8 +202,17 @@ public class Driver {
               .dropDuplicates("Name","Score","Club").sort(desc("Score"));
 
       hive_all_players_df.persist(StorageLevel.MEMORY_AND_DISK());
-      hive_all_players_df.show(50);
+//      hive_all_players_df.show(50);
 
+
+      //hive part
+      hive_all_players_df.createOrReplaceTempView("player");
+      spark.sqlContext().sql("Select * from player").show();
+
+//      spark.sql("CREATE TABLE IF NOT EXISTS player (name STRING, age int, Nationality STRING,Continent STRING,Score int,Club STRING,numValue float, numSalary float) USING hive");
+      spark.sqlContext().sql("SELECT Nationality,SUM(numSalary) as totalSalaries FROM player GROUP BY(Nationality) ORDER BY totalSalaries DESC").show();
+      spark.sqlContext().sql("SELECT Club,SUM(numSalary) as totalSalaries FROM player GROUP BY(Club) ORDER BY totalSalaries DESC").show();
+      spark.sqlContext().sql("SELECT Continent,AVG(Score) as avgScroe FROM player GROUP BY(Continent) ORDER BY avgScroe DESC").show();
 
 
       //TODO: Write all players dataset to hive database.
