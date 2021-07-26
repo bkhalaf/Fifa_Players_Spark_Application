@@ -24,7 +24,9 @@ public class Driver {
       String csvFile = "fifaStats.csv";
       String updatedCsvFile = "updatedPlayers.csv";
 
-      SparkConf conf = new SparkConf().setAppName(appName).setMaster("local[*]");
+      SparkConf conf = new SparkConf()
+              .setAppName(appName);
+//              .setMaster("local[*]"); //comment set master when deploying to emr cluster
       JavaSparkContext sc = new JavaSparkContext(conf);
       Encoder<Player> playerEncoder = Encoders.bean(Player.class);
       Encoder<PlayerValues> playerValuesEncoder = Encoders.bean(PlayerValues.class);
