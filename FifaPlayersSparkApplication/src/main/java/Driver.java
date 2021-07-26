@@ -39,7 +39,7 @@ public class Driver {
               .builder()
               .appName(appName)
 //                .config("spark.sql.warehouse.dir", warehouseLocation)
-//                .enableHiveSupport()
+                .enableHiveSupport()  //comment in local mode
               .getOrCreate();
 
       //read fifa stats in dataframes -- players dataset
