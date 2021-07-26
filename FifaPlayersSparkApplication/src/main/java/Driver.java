@@ -5,9 +5,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.sql.*;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.storage.StorageLevel;
-import scala.collection.Seq;
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -149,7 +146,8 @@ public class Driver {
       Dataset<Row> playerValues =all_players_df.select(col("Name"),regexp_replace(col("Value"),"€","").alias("NumValue"));
       Dataset<Row> playerSalaries = all_players_df.select(col("Name"),regexp_replace(col("Salary"),"€","").alias("NumSalary"));
 
-
+      playerSalaries.show();
+      playerValues.show();
       //Read Player Values as array List -- re map values from $90M to 90000 to be stored in Hive database
       List<Row> playerValuesList = new ArrayList<>();
       List<PlayerValues> playerValuesListUpdated = new ArrayList<>();
@@ -157,9 +155,9 @@ public class Driver {
       for (int i=0;i<playerValuesList.size();i++){
          String name = playerValuesList.get(i).toString().split(",")[0].replaceAll("\\[","");
 
-         String playerValueString =(playerValuesList.get(i).toString().split(",")[1].replaceAll("]","")).replaceAll("€","");
-         float numericValue=Float.parseFloat(playerValueString.toString().replaceAll("\\s*[a-zA-Z]+\\s*",""));
-         String sign = playerValueString.toString().replaceAll("\\s*[0-9]+\\s*","").toUpperCase();
+         String playerValueString =(playerValuesList.get(i).toString().split(",")[1].replaceAll("]","")).replaceAll("\\s*€\\s*","");
+         float numericValue=Float.parseFloat(playerValueString.replaceAll("\\s*[a-zA-Z€]+\\s*",""));
+         String sign = playerValueString.replaceAll("\\s*[0-9]+\\s*","").toUpperCase();
          if(sign.compareTo("M")==0){
             numericValue*=1000000;
          } else if(sign.compareTo("K")==0){
