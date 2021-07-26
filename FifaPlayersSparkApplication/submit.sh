@@ -9,4 +9,5 @@ mvn compile
 mvn install
 cp -f /home/hadoop/Fifa_Players_Spark_Application/FifaPlayersSparkApplication/target/FifaPlayersSparkApplication-1.0-SNAPSHOT.jar FifaPlayersSparkApplication-1.0-SNAPSHOT.jar
 aws s3 cp FifaPlayersSparkApplication-1.0-SNAPSHOT.jar s3://harrijars/FifaPlayersSparkApplication-1.0-SNAPSHOT.jar
-spark-submit --master yarn --deploy-mode cluster --class Driver  FifaPlayersSparkApplication-1.0-SNAPSHOT.jar
+spark-submit --master yarn --deploy-mode cluster --class Driver  --conf spark.sql.catalogImplementation=hive --conf spark.sql.warehouse.dir=hdfs://ip-172-31-13-156.us-east-2.compute.internal:8020/user/hadoop/sql/maetadata/hive FifaPlayersSparkApplication-1.0-SNAPSHOT.jar
+#spark-submit --master yarn --deploy-mode cluster --class Driver  s3://harrijars/FifaPlayersSparkApplication-1.0-SNAPSHOT.jar
